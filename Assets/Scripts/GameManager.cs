@@ -8,6 +8,11 @@ public class GameManager : MonoBehaviour
     // [추가] 일시정지 UI 패널을 연결할 변수
     public GameObject pauseMenuPanel; 
     public GameObject missionClearPanel;
+    
+    // [추가] 별 UI 이미지들 (Inspector에서 연결)
+    public GameObject star1;
+    public GameObject star2;
+    public GameObject star3;
 
     // [추가] 현재 일시정지 상태인지 확인하는 변수
     private bool isPaused = false;
@@ -72,16 +77,47 @@ public class GameManager : MonoBehaviour
         Debug.Log("플레이어가 사망했습니다. 씬을 다시 시작합니다.");
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
-    // [추가] 미션 클리어 함수 (버튼이 쓸 수 있게 public으로!)
-    public void LevelComplete()
+    // [수정] 미션 클리어 함수 - 남은 shot 수를 받아서 별 표시
+    public void LevelComplete(int remainingShots)
     {
-        Debug.Log("미션 클리어!");
+        Debug.Log("미션 클리어! 남은 shots: " + remainingShots);
 
         // 1. 게임 시간을 멈춥니다. (Pause와 동일)
         Time.timeScale = 0f;
 
         // 2. 숨겨뒀던 "미션 클리어" 패널을 켭니다.
         missionClearPanel.SetActive(true);
+        
+        // 3. 남은 shot 수에 따라 별 표시
+        int stars = CalculateStars(remainingShots);
+        ShowStars(stars);
+    }
+    
+    // 남은 shot 수에 따라 별 개수 계산
+    private int CalculateStars(int remainingShots)
+    {
+        if (remainingShots >= 5)
+            return 3; // 별 3개 (완벽!)
+        else if (remainingShots >= 3)
+            return 2; // 별 2개 (좋음)
+        else
+            return 1; // 별 1개 (클리어)
+    }
+    
+    // 별 UI 표시
+    private void ShowStars(int starCount)
+    {
+        // 모든 별 비활성화
+        if (star1 != null) star1.SetActive(false);
+        if (star2 != null) star2.SetActive(false);
+        if (star3 != null) star3.SetActive(false);
+        
+        // starCount에 따라 별 활성화
+        if (starCount >= 3 && star3 != null) star3.SetActive(true);
+        else if (starCount >= 2 && star2 != null) star2.SetActive(true);
+        else if (starCount >= 1 && star1 != null) star1.SetActive(true);
+
+        Debug.Log("별 " + starCount + "개 획득!");
     }
 
     // [수정] "다음 레벨" 버튼이 호출할 함수
