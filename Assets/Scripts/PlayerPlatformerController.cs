@@ -10,6 +10,8 @@ public class PlayerPlatformerController : PhysicsObject {
     private SpriteRenderer spriteRenderer;
     private Animator animator;
     private bool is_Shooting = false; // PlayerPlatformerController 안에만 존재
+    private float lastShootTime = 0f; // 마지막 발사 시간
+    public float shootCooldown = 0.2f; // 발사 쿨다운 (초)
 
 
     // Use this for initialization
@@ -48,18 +50,18 @@ public class PlayerPlatformerController : PhysicsObject {
         }
 
         
-        // 🟩 스페이스바로 shoot 제어 (bool)
-        if (Input.GetKeyDown(KeyCode.Space))
+        // 🟩 스페이스바로 shoot 제어 (연사 가능, 쿨다운 적용)
+        if (Input.GetKeyDown(KeyCode.Space) && Time.time >= lastShootTime + shootCooldown)
         {
             is_Shooting = true;
-            // animator.SetBool("shoot", true);
+            lastShootTime = Time.time;
             animator.SetTrigger("shootCam");
+            // 즉시 Ray 발사 (딜레이 없음)
             ShootRaycast();
         }
         if (Input.GetKeyUp(KeyCode.Space))
         {
             is_Shooting = false;
-            // animator.SetBool("shoot", false);
         }
 
         if(move.x > 0.01f)
