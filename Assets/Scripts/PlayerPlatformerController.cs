@@ -58,13 +58,14 @@ public class PlayerPlatformerController : PhysicsObject {
         if (Input.GetKeyDown(KeyCode.Space) && Time.time >= lastShootTime + shootCooldown && remainingShots > 0)
         {
             is_Shooting = true;
+            // 즉시 Ray 발사 (딜레이 없음)
+            ShootRaycast();
             lastShootTime = Time.time;
             remainingShots--; // 발사 횟수 감소
             UpdateShotUI(); // UI 업데이트
             Debug.Log("남은 발사 횟수: " + remainingShots);
             animator.SetTrigger("shootCam");
-            // 즉시 Ray 발사 (딜레이 없음)
-            ShootRaycast();
+
         }
         if (Input.GetKeyUp(KeyCode.Space))
         {
