@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using TMPro; // TextMeshPro 사용
 
 public class PlayerPlatformerController : PhysicsObject {
 
@@ -12,6 +13,8 @@ public class PlayerPlatformerController : PhysicsObject {
     private bool is_Shooting = false; // PlayerPlatformerController 안에만 존재
     private float lastShootTime = 0f; // 마지막 발사 시간
     public float shootCooldown = 0.2f; // 발사 쿨다운 (초)
+    private int remainingShots = 5; // 남은 발사 횟수
+    public TextMeshProUGUI shotCountText; // UI 텍스트 (Inspector에서 연결)
 
 
     // Use this for initialization
@@ -19,6 +22,7 @@ public class PlayerPlatformerController : PhysicsObject {
     {
         spriteRenderer = GetComponent<SpriteRenderer>();
         animator = GetComponent<Animator>();
+        UpdateShotUI(); // 시작 시 UI 업데이트
     }
     
 
@@ -50,11 +54,14 @@ public class PlayerPlatformerController : PhysicsObject {
         }
 
         
-        // 🟩 스페이스바로 shoot 제어 (연사 가능, 쿨다운 적용)
-        if (Input.GetKeyDown(KeyCode.Space) && Time.time >= lastShootTime + shootCooldown)
+        // 🟩 스페이스바로 shoot 제어 (연사 가능, 쿨다운 적용, 최대 5회)
+        if (Input.GetKeyDown(KeyCode.Space) && Time.time >= lastShootTime + shootCooldown && remainingShots > 0)
         {
             is_Shooting = true;
             lastShootTime = Time.time;
+            remainingShots--; // 발사 횟수 감소
+            UpdateShotUI(); // UI 업데이트
+            Debug.Log("남은 발사 횟수: " + remainingShots);
             animator.SetTrigger("shootCam");
             // 즉시 Ray 발사 (딜레이 없음)
             ShootRaycast();
@@ -133,6 +140,14 @@ public class PlayerPlatformerController : PhysicsObject {
                 }
 
             }
+        }
+    }
+
+    void UpdateShotUI()
+    {
+        if (shotCountText != null)
+        {
+            shotCountText.text = "남은 촬영횟수: " + remainingShots;
         }
     }
 }
