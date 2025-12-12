@@ -111,7 +111,7 @@ public class PlayerPlatformerController : PhysicsObject {
         else if (other.CompareTag("Finish"))
         {
             // GameManager의 LevelComplete 함수를 호출
-            FindObjectOfType<GameManager>().LevelComplete();
+            FindObjectOfType<GameManager>().LevelComplete(remainingShots);
         }
     }
 
@@ -120,7 +120,7 @@ public class PlayerPlatformerController : PhysicsObject {
         Debug.Log("ShootRay");
         // 플레이어가 바라보는 방향 설정
         Vector2 direction = spriteRenderer.flipX ? Vector2.left : Vector2.right;
-        Debug.DrawRay(transform.position, direction * 1.5f, Color.red, 0.5f);
+        Debug.DrawRay(transform.position, direction * 1.5f, Color.red, 1.0f);
 
         // Raycast 쏘기 (거리: 1.5f 정도)
         //RaycastHit2D hit = Physics2D.Raycast(transform.position, direction, 1.5f, LayerMask.GetMask("Obstacle", "Ignore Raycast"));
@@ -147,7 +147,7 @@ public class PlayerPlatformerController : PhysicsObject {
     {
         if (shotCountText != null)
         {
-            shotCountText.text = "남은 촬영횟수: " + remainingShots;
+            shotCountText.text = "Shots Left: " + remainingShots;
         }
     }
 }
